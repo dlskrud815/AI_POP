@@ -59,14 +59,18 @@ CAIPOPDlg::CAIPOPDlg(CWnd* pParent /*=nullptr*/)
 void CAIPOPDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_BUTTON1, m_skinBtn);
+	DDX_Control(pDX, IDC_BUTTON_LOGIN, m_skinBtn);
+	DDX_Text(pDX, IDC_EDIT_ID, m_userID);
+	DDX_Text(pDX, IDC_EDIT_PW, m_userPW);
 }
 
 BEGIN_MESSAGE_MAP(CAIPOPDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CAIPOPDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON_LOGIN, &CAIPOPDlg::OnBnClickedButtonLogin)
+	ON_WM_LBUTTONDOWN()
+	ON_BN_CLICKED(IDC_BUTTON2, &CAIPOPDlg::OnExitClicked)
 END_MESSAGE_MAP()
 
 
@@ -102,6 +106,8 @@ BOOL CAIPOPDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -144,6 +150,13 @@ void CAIPOPDlg::OnPaint()
 	}
 	else
 	{
+		CPaintDC dc(this); // 그리기를 위한 장치 컨텍스트
+
+		// 배경을 채우는 사각형 그리기
+		CRect rect;
+		GetClientRect(&rect);
+		dc.FillSolidRect(rect, RGB(53, 58, 64)); // 흰색 배경
+
 		CDialogEx::OnPaint();
 	}
 }
@@ -155,10 +168,48 @@ HCURSOR CAIPOPDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CAIPOPDlg::OnBnClickedButton1()
+void CAIPOPDlg::OnBnClickedButtonLogin()
 {
 	// TODO: Add your control notification handler code here
-	AfxMessageBox(_T("SkinButton!"));
+	//AfxMessageBox(_T("SkinButton!"));
+
+	UpdateData(TRUE);  // 다이얼로그 컨트롤 값 업데이트
+
+	CStringA strIdA(m_userID), strPwA(m_userPW);
+	string stdID(strIdA.GetBuffer()), stdPW(strPwA.GetBuffer());
+
+
+	// MySQLConnector 객체 생성
+	MySQL_Connector mysql;
+
+	// 데이터베이스 서버 연결
+	if (mysql.connect("tcp://127.0.0.1:3306", "user", "1234")) {
+		// 로그인 처리
+		if (mysql.login(stdID, stdPW)) {
+			MessageBox(_T("로그인 성공"), _T("알림"), MB_OK | MB_ICONINFORMATION);
+			// 로그인 성공 후 다음 작업 수행
+		}
+		else {
+			MessageBox(_T("아이디 또는 비밀번호가 틀렸습니다."), _T("오류"), MB_OK | MB_ICONERROR);
+		}
+	}
+	else {
+		MessageBox(_T("데이터베이스 연결 실패"), _T("오류"), MB_OK | MB_ICONERROR);
+	}
+}
+
+
+void CAIPOPDlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	//다이얼로그 드래그
+	SendMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
+
+	CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+
+void CAIPOPDlg::OnExitClicked()
+{
+	// 종료 버튼 클릭 시 수행할 작업 추가
+	OnOK(); // 기본 종료 동작 (EndDialog(IDOK)과 동일)
 }

@@ -36,6 +36,9 @@
     <ClInclude Include="CSkinButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MySQL_Connector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI_POP.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CSkinButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MySQL_Connector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

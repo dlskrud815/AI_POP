@@ -3,8 +3,11 @@
 //
 
 #pragma once
+#include "MySQL_Connector.h"
 #include "CSkinButton.h"
+#include <string>
 
+using namespace std;
 
 // CAIPOPDlg dialog
 class CAIPOPDlg : public CDialogEx
@@ -35,5 +38,10 @@ protected:
 
 public:
 	CSkinButton m_skinBtn;
-	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButtonLogin();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnExitClicked();
+
+	CString m_userID;
+	CString m_userPW;
 };
